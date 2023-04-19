@@ -1,13 +1,14 @@
 from typing import Optional
 import threading
 import cv2 as cv
-from opencv_kamera_types import OpenCvVideoCaptureProp, CameraSettings, SupportedSettings, ImageFormat
+from opencv_kamera_types import OpenCvVideoCaptureProp, CameraSettings, SupportedSettings, ImageColor, ImageFormat
 
 class OpenCvCamera:
     def __init__(self):
         self._camera = None # lazy initialization
         self._shouldCaptureVideo = False;
-        self._videoImageFormat = None
+        self._videoImageColor = ImageColor.GRAY
+        self._videoImageFormat = ImageFormat.JPG
         self._captureVideoThread = threading.Thread(target=self._video_capture_thread)
         self._image = None
 
@@ -24,10 +25,12 @@ class OpenCvCamera:
     def close_camera_connection(self) -> None:
         if self.has_camera_connection(): self._camera.release()
 
-    def snap_image(self, imgFormat: Optional[ImageFormat] = None):
+    def snap_image(self, imgColor: Optional[ImageColor], imgFormat: Optional[ImageFormat] = None):
         if not self.has_camera_connection(): self.open_camera_connection()
         readSuccess, img = self._camera.read()
-        if readSuccess and imgFormat: _, img = cv.imencode(imgFormat.value, img)
+        if readSuccess:
+            if imgColor == ImageColor.GRAY: img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+            if imgFormat and imgFormat != ImageFormat.RAW: _, img = cv.imencode(imgFormat.value, img)
         return readSuccess, img
 
     def start_video_capture(self) -> None:
@@ -38,12 +41,15 @@ class OpenCvCamera:
         self._shouldCaptureVideo = False
         if self._captureVideoThread.is_alive(): self._captureVideoThread.join()
 
+    def set_video_image_color(self, imgColor: ImageColor) -> None:
+        self._videoImageColor = imgColor
+
     def set_video_image_format(self, imgFormat: ImageFormat) -> None:
         self._videoImageFormat = imgFormat
 
     def _video_capture_thread(self) -> None:
         while self._shouldCaptureVideo:
-            _, image = self.snap_image(self._videoImageFormat)
+            _, image = self.snap_image(self._videoImageFormat, self._videoImageFormat)
             self._image = image
 
     def get_video_capture_image(self):
