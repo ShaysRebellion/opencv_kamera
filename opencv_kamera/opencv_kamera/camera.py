@@ -25,7 +25,7 @@ class OpenCvCamera:
     def close_camera_connection(self) -> None:
         if self.has_camera_connection(): self._camera.release()
 
-    def snap_image(self, imgColor: Optional[ImageColor], imgFormat: Optional[ImageFormat] = None):
+    def snap_image(self, imgColor: Optional[ImageColor] = ImageColor.COLOR, imgFormat: Optional[ImageFormat] = ImageFormat.RAW):
         if not self.has_camera_connection(): self.open_camera_connection()
         readSuccess, img = self._camera.read()
         if readSuccess:
