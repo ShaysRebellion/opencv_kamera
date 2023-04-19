@@ -6,6 +6,10 @@ OpenCvVideoCaptureProp = int
 CameraSettings = dict[OpenCvVideoCaptureProp, float]
 SupportedSettings = dict[OpenCvVideoCaptureProp, bool]
 
+class ImageColor(Enum):
+    COLOR = 'color'
+    GRAY = 'gray'
+
 class ImageFormat(Enum):
     RAW = ''
     JPG = '.jpg'
