@@ -11,6 +11,6 @@ class ImageColor(Enum):
     GRAY = 'gray'
 
 class ImageFormat(Enum):
-    RAW = ''
+    RAW = '.raw'
     JPG = '.jpg'
     PNG = '.png'
