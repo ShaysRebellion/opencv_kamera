@@ -1,0 +1,2 @@
+opencv-python>=4.7.0.72
+opencv-kamera-types@git+https://github.com/ShaysRebellion/opencv_kamera@v0.0.1#subdirectory=opencv_kamera_types
